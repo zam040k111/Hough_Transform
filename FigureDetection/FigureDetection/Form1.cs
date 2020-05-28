@@ -40,8 +40,6 @@ namespace FigureDetection
                 Lines_Background(null, new ToolStripItemClickedEventArgs(чистыйФонToolStripMenuItem));
             pictureBox2.Image = img.SobelFilter(baseImg.Clone() as Bitmap);
             pictureBox2.Image = img.InterferenceRemoval(pictureBox2.Image as Bitmap);
-            //pictureBox2.Image = img.ColorInverse(pictureBox2.Image as Bitmap);
-            //pictureBox2.Image = img.HoughTransform(pictureBox2.Image as Bitmap, progressBar1);
             pictureBox2.Image = img.HoughTransformViaAccord(pictureBox2.Image as Bitmap);
         }
 
@@ -189,6 +187,8 @@ namespace FigureDetection
 
         private void accuracy_Click(object sender, ToolStripItemClickedEventArgs e)
         {
+            if (capture != null)
+                capture.Pause();
             toolStripMenuItem12.Checked = false;
             toolStripMenuItem13.Checked = false;
             toolStripMenuItem14.Checked = false;
@@ -224,7 +224,9 @@ namespace FigureDetection
                 default:
                     break;
             }
-            button2_Click(sender, e);
+            if (capture != null)
+                toolStripButton1_Click(sender, e);
+            else button2_Click(sender, e);
         }
 
         private void Form1_Load(object sender, EventArgs e)

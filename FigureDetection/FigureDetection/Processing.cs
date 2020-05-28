@@ -219,7 +219,6 @@ namespace FigureDetection
             Marshal.Copy(ptr, rgbValue, 0, bytes);
 
             bmp.UnlockBits(bmpData);
-            //g.Clear(Color.Transparent);
 
             Pen p = new Pen(Color.Black, 1.0F);
 
@@ -251,8 +250,7 @@ namespace FigureDetection
                         y = j / 4;
                         int rho;
                         int thetaIndex = 0;
-
-
+                        
                         x -= widthImg / 2;
                         y -= height / 2;
                         for (; thetaIndex < numAngleCells; thetaIndex++)
@@ -272,60 +270,38 @@ namespace FigureDetection
             var sequence = new FiltersSequence(Grayscale.CommonAlgorithms.BT709);
 
             Bitmap binaryImage = sequence.Apply(img);
-                        
-            //binaryImage.Save("binaryImage.png");
-
             var lineTransform = new HoughLineTransformation();
             lineTransform.ProcessImage(binaryImage);
 
             Bitmap houghLineImage = lineTransform.ToBitmap();
-
-            
-            //houghLineImage.Save("hough-output.png");
-            
-
             HoughLine[] lines = lineTransform.GetLinesByRelativeIntensity(Accuracy);
             //HoughLine[] lines = lineTransform.GetMostIntensiveLines(5);
 
-
             foreach (HoughLine line in lines)
             {
-                // get line's radius and theta values
                 int r = line.Radius;
                 double t = line.Theta;
-
-                // check if line is in lower part of the image
                 if (r < 0)
                 {
                     t += 180;
                     r = -r;
                 }
-
-                // convert degrees to radians
                 t = (t / 180) * Math.PI;
-
-                // get image centers (all coordinate are measured relative to center)
                 int w2 = img.Width / 2;
                 int h2 = img.Height / 2;
-
                 double x0 = 0, x1 = 0, y0 = 0, y1 = 0;
-
                 if (line.Theta != 0)
                 {
-                    // non-vertical line
-                    x0 = -w2; // most left point
-                    x1 = w2;  // most right point
-
-                    // calculate corresponding y values
+                    x0 = -w2;
+                    x1 = w2;
+                    
                     y0 = (-Math.Cos(t) * x0 + r) / Math.Sin(t);
                     y1 = (-Math.Cos(t) * x1 + r) / Math.Sin(t);
                 }
                 else
                 {
-                    // vertical line
                     x0 = line.Radius;
                     x1 = line.Radius;
-
                     y0 = h2;
                     y1 = -h2;
                 }
